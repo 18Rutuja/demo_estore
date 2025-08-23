@@ -1,0 +1,251 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>My Account</h1>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Loading your profile...</p>
+  </div>
+
+  <div *ngIf="!isLoading" class="profile-content">
+    <div class="profile-sidebar">
+      <div class="user-info">
+        <div class="user-avatar">
+          <div class="avatar-placeholder">{{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0) }}</div>
+        </div>
+        <h2 class="user-name">{{ user.firstName }} {{ user.lastName }}</h2>
+        <p class="user-email">{{ user.email }}</p>
+      </div>
+      
+      <div class="profile-nav">
+        <button 
+          class="nav-item" 
+          [ngClass]="{'active': activeTab === 'profile'}" 
+          (click)="setActiveTab('profile')"
+        >
+          <i class="fa fa-user"></i> Profile
+        </button>
+        <button 
+          class="nav-item" 
+          [ngClass]="{'active': activeTab === 'library'}" 
+          (click)="setActiveTab('library')"
+        >
+          <i class="fa fa-book"></i> My Library
+        </button>
+        <button 
+          class="nav-item" 
+          [ngClass]="{'active': activeTab === 'orders'}" 
+          (click)="setActiveTab('orders')"
+        >
+          <i class="fa fa-shopping-bag"></i> Order History
+        </button>
+        <button 
+          class="nav-item" 
+          [ngClass]="{'active': activeTab === 'settings'}" 
+          (click)="setActiveTab('settings')"
+        >
+          <i class="fa fa-cog"></i> Settings
+        </button>
+        <button class="nav-item logout" (click)="logout()">
+          <i class="fa fa-sign-out"></i> Logout
+        </button>
+      </div>
+    </div>
+
+    <div class="profile-main">
+      <!-- Profile Tab -->
+      <div *ngIf="activeTab === 'profile'" class="profile-tab">
+        <div class="tab-header">
+          <h2>Profile Information</h2>
+          <button class="edit-btn" (click)="toggleEditMode()">{{ isEditMode ? 'Cancel' : 'Edit Profile' }}</button>
+        </div>
+        
+        <div class="profile-details">
+          <div class="detail-group">
+            <h3>Personal Information</h3>
+            
+            <!-- View Mode -->
+            <ng-container *ngIf="!isEditMode">
+              <div class="detail-row">
+                <span class="label">First Name:</span>
+                <span class="value">{{ user.firstName }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Last Name:</span>
+                <span class="value">{{ user.lastName }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Email:</span>
+                <span class="value">{{ user.email }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Phone:</span>
+                <span class="value">{{ user.phoneNumber || 'Not provided' }}</span>
+              </div>
+            </ng-container>
+            
+            <!-- Edit Mode -->
+            <ng-container *ngIf="isEditMode">
+              <div class="detail-row">
+                <span class="label">First Name:</span>
+                <input type="text" [(ngModel)]="editableUser.firstName" class="form-control">
+              </div>
+              <div class="detail-row">
+                <span class="label">Last Name:</span>
+                <input type="text" [(ngModel)]="editableUser.lastName" class="form-control">
+              </div>
+              <div class="detail-row">
+                <span class="label">Email:</span>
+                <input type="email" [(ngModel)]="editableUser.email" class="form-control" disabled>
+              </div>
+              <div class="detail-row">
+                <span class="label">Phone:</span>
+                <input type="tel" [(ngModel)]="editableUser.phoneNumber" class="form-control">
+              </div>
+            </ng-container>
+          </div>
+          
+          <div class="detail-group">
+            <h3>Account Information</h3>
+            <div class="detail-row">
+              <span class="label">Member Since:</span>
+              <span class="value">{{ user.createdAt | date:'mediumDate' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Books Purchased:</span>
+              <span class="value">{{ library.length }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Save Button in Edit Mode -->
+        <div *ngIf="isEditMode" class="edit-actions">
+          <button class="edit-btn" (click)="saveProfile()">Save Changes</button>
+        </div>
+      </div>
+
+      <!-- Library Tab -->
+      <div *ngIf="activeTab === 'library'" class="library-tab">
+        <div class="tab-header">
+          <h2>My Library</h2>
+          <div class="search-box">
+            <input type="text" [(ngModel)]="librarySearchTerm" placeholder="Search your library">
+            <button class="search-btn">Search</button>
+          </div>
+        </div>
+        
+        <div *ngIf="filteredLibrary.length === 0" class="empty-state">
+          <div class="empty-icon">
+            <i class="fa fa-book"></i>
+          </div>
+          <h3>Your library is empty</h3>
+          <p>Purchase your first ebook to start building your collection.</p>
+          <button class="browse-btn" routerLink="/">Browse Books</button>
+        </div>
+        
+        <div *ngIf="filteredLibrary.length > 0" class="book-grid">
+          <div class="book-card" *ngFor="let book of filteredLibrary">
+            <div class="book-cover">
+              <img [src]="book.coverImageUrl" [alt]="book.title">
+            </div>
+            <div class="book-info">
+              <h3 class="book-title">{{ book.title }}</h3>
+              <p class="book-author">by {{ book.author }}</p>
+              <button class="read-btn" [routerLink]="['/read', book.id]">Read Now</button>
+              <button class="download-btn" (click)="downloadBook(book.id)">Download</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orders Tab -->
+      <div *ngIf="activeTab === 'orders'" class="orders-tab">
+        <div class="tab-header">
+          <h2>Order History</h2>
+        </div>
+        
+        <div *ngIf="orders.length === 0" class="empty-state">
+          <div class="empty-icon">
+            <i class="fa fa-shopping-bag"></i>
+          </div>
+          <h3>No orders yet</h3>
+          <p>You haven't placed any orders yet.</p>
+          <button class="browse-btn" routerLink="/">Start Shopping</button>
+        </div>
+        
+        <div *ngIf="orders.length > 0" class="orders-list">
+          <div class="order-card" *ngFor="let order of orders">
+            <div class="order-header">
+              <div>
+                <h3>Order #{{ order.orderNumber }}</h3>
+                <p class="order-date">{{ order.createdAt | date:'medium' }}</p>
+              </div>
+              <div class="order-status" [ngClass]="order.status.toLowerCase()">
+                {{ order.status }}
+              </div>
+            </div>
+            
+            <div class="order-items">
+              <div class="order-item" *ngFor="let item of order.orderItems">
+                <div class="item-image">
+                  <img [src]="item.book.coverImageUrl" [alt]="item.book.title">
+                </div>
+                <div class="item-details">
+                  <h4>{{ item.book.title }}</h4>
+                  <p>by {{ item.book.author }}</p>
+                </div>
+                <div class="item-price">${{ item.price.toFixed(2) }}</div>
+              </div>
+            </div>
+            
+            <div class="order-footer">
+              <div class="order-total">
+                <span>Total:</span>
+                <span>${{ order.totalAmount.toFixed(2) }}</span>
+              </div>
+              <button class="view-details-btn" (click)="viewOrderDetails(order.id)">View Details</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div *ngIf="activeTab === 'settings'" class="settings-tab">
+        <div class="tab-header">
+          <h2>Account Settings</h2>
+        </div>
+        
+        <div class="settings-section">
+          <h3>Password</h3>
+          <p>Change your account password</p>
+          <button class="settings-btn" (click)="showChangePasswordModal()">Change Password</button>
+        </div>
+        
+        <div class="settings-section">
+          <h3>Email Preferences</h3>
+          <div class="preference-option">
+            <input type="checkbox" id="newsletter" [(ngModel)]="emailPreferences.newsletter">
+            <label for="newsletter">Receive newsletter</label>
+          </div>
+          <div class="preference-option">
+            <input type="checkbox" id="promotions" [(ngModel)]="emailPreferences.promotions">
+            <label for="promotions">Receive promotional emails</label>
+          </div>
+          <div class="preference-option">
+            <input type="checkbox" id="order-updates" [(ngModel)]="emailPreferences.orderUpdates">
+            <label for="order-updates">Receive order updates</label>
+          </div>
+          <button class="settings-btn" (click)="saveEmailPreferences()">Save Preferences</button>
+        </div>
+        
+        <div class="settings-section danger-zone">
+          <h3>Danger Zone</h3>
+          <p>Permanently delete your account and all associated data</p>
+          <button class="delete-account-btn" (click)="confirmDeleteAccount()">Delete Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

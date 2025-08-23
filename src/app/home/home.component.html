@@ -1,0 +1,141 @@
+<!-- Modern, MNC-style Homepage with Material Design Influence -->
+<div class="home-container">
+  <!-- Hero Section with Dynamic Background -->
+  
+<section class="hero-section">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>Discover Your Next Favorite Book</h1>
+    <p>Explore thousands of titles across all genres, instantly available on any device.</p>
+    <div class="search-container">
+      <input #searchInput type="text" placeholder="Search by title, author, or genre..." (keyup.enter)="searchBooks(searchInput.value)">
+      <button class="search-button" (click)="searchBooks(searchInput.value)">
+        <i class="fas fa-search"></i> Search
+      </button>
+    </div>
+
+    <!-- 🚀 Button to open PDF Viewer -->
+    <div class="pdf-viewer-access">
+      <button class="open-pdf-button" [routerLink]="['/read', 1]">
+        <i class="fas fa-book-open"></i> Open Sample PDF Viewer
+      </button>
+    </div>
+  </div>
+</section>
+
+  <!-- Loading & Error States -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <div class="spinner"></div>
+    <p>Loading your personalized recommendations...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <div class="error-icon">
+      <i class="fas fa-exclamation-circle"></i>
+    </div>
+    <p>{{ error }}</p>
+    <button class="retry-button" (click)="loadHomePageData()">Try Again</button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" *ngIf="!isLoading">
+    <!-- Featured Books Carousel -->
+    <section class="book-section featured-books" *ngIf="featuredBooks.length > 0">
+      <div class="section-header">
+        <h2><i class="fas fa-star"></i> Featured Books</h2>
+        <a routerLink="/books/featured" class="view-all-link">View All <i class="fas fa-chevron-right"></i></a>
+      </div>
+      <div class="book-carousel">
+        <div *ngFor="let book of featuredBooks" class="book-card">
+          <div class="book-cover">
+            <div class="book-badge featured">Featured</div>
+            <img [src]="book.coverImageUrl || 'assets/images/placeholder-cover.png'" [alt]="book.title">
+            <div class="book-hover-info">
+              <p class="book-description">{{ book.description | slice:0:100 }}{{ book.description && book.description.length > 100 ? '...' : '' }}</p>
+              <button class="details-button" (click)="navigateToBookDetails(book.id, $event)">View Details</button>
+              <button class="add-cart-button" (click)="addBookToCart(book, $event)">Add to Cart</button>
+            </div>
+          </div>
+          <div class="book-info">
+            <h3 class="book-title" title="{{ book.title }}">{{ book.title }}</h3>
+            <p class="book-author">by {{ book.author }}</p>
+            <div class="book-meta">
+              <span class="book-price">${{ book.price | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Repeat same structure for New Releases and Bestsellers with (click) handlers -->
+    <section class="book-section new-releases" *ngIf="newReleases.length > 0">
+      <div class="section-header">
+        <h2><i class="fas fa-calendar-alt"></i> New Releases</h2>
+        <a routerLink="/books/new-releases" class="view-all-link">View All <i class="fas fa-chevron-right"></i></a>
+      </div>
+      <div class="book-grid">
+        <div *ngFor="let book of newReleases" class="book-card">
+          <div class="book-cover">
+            <div class="book-badge new">New</div>
+            <img [src]="book.coverImageUrl || 'assets/images/placeholder-cover.png'" [alt]="book.title">
+            <div class="book-hover-info">
+              <p class="book-description">{{ book.description | slice:0:100 }}{{ book.description && book.description.length > 100 ? '...' : '' }}</p>
+              <button class="details-button" (click)="navigateToBookDetails(book.id, $event)">View Details</button>
+              <button class="add-cart-button" (click)="addBookToCart(book, $event)">Add to Cart</button>
+            </div>
+          </div>
+          <div class="book-info">
+            <h3 class="book-title" title="{{ book.title }}">{{ book.title }}</h3>
+            <p class="book-author">by {{ book.author }}</p>
+            <div class="book-meta">
+              <span class="book-price">${{ book.price | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="book-section bestsellers" *ngIf="bestsellers.length > 0">
+      <div class="section-header">
+        <h2><i class="fas fa-award"></i> Bestsellers</h2>
+        <a routerLink="/books/bestsellers" class="view-all-link">View All <i class="fas fa-chevron-right"></i></a>
+      </div>
+      <div class="book-grid">
+        <div *ngFor="let book of bestsellers" class="book-card">
+          <div class="book-cover">
+            <div class="book-badge bestseller">Bestseller</div>
+            <img [src]="book.coverImageUrl || 'assets/images/placeholder-cover.png'" [alt]="book.title">
+            <div class="book-hover-info">
+              <p class="book-description">{{ book.description | slice:0:100 }}{{ book.description && book.description.length > 100 ? '...' : '' }}</p>
+              <button class="details-button" (click)="navigateToBookDetails(book.id, $event)">View Details</button>
+              <button class="add-cart-button" (click)="addBookToCart(book, $event)">Add to Cart</button>
+            </div>
+          </div>
+          <div class="book-info">
+            <h3 class="book-title" title="{{ book.title }}">{{ book.title }}</h3>
+            <p class="book-author">by {{ book.author }}</p>
+            <div class="book-meta">
+              <span class="book-price">${{ book.price | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories-section" *ngIf="categories.length > 0">
+      <div class="section-header">
+        <h2><i class="fas fa-tags"></i> Browse by Category</h2>
+      </div>
+      <div class="categories-grid">
+        <div *ngFor="let category of categories" class="category-card" (click)="navigateToCategory(category.id)">
+          <div class="category-icon">
+            <i class="fas fa-book"></i>
+          </div>
+          <h3>{{ category.name }}</h3>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+

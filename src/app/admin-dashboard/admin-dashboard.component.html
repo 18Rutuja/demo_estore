@@ -1,0 +1,417 @@
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>Admin Dashboard</h1>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Loading data...</p>
+  </div>
+
+  <div *ngIf="!isLoading" class="admin-content">
+    <div class="admin-sidebar">
+      <div class="admin-nav">
+        <button 
+          class="nav-item" 
+          [ngClass]="{'active': activeTab === 'books'}" 
+          (click)="setActiveTab('books')"
+        >
+          <i class="fa fa-book"></i> Books
+        </button>
+        <button 
+          class="nav-item" 
+          [ngClass]="{'active': activeTab === 'categories'}" 
+          (click)="setActiveTab('categories')"
+        >
+          <i class="fa fa-tags"></i> Categories
+        </button>
+        <button 
+          class="nav-item" 
+          [ngClass]="{'active': activeTab === 'users'}" 
+          (click)="setActiveTab('users')"
+        >
+          <i class="fa fa-users"></i> Users
+        </button>
+        <button 
+          class="nav-item" 
+          [ngClass]="{'active': activeTab === 'orders'}" 
+          (click)="setActiveTab('orders')"
+        >
+          <i class="fa fa-shopping-cart"></i> Orders
+        </button>
+        <button 
+          class="nav-item" 
+          [ngClass]="{'active': activeTab === 'reports'}" 
+          (click)="setActiveTab('reports')"
+        >
+          <i class="fa fa-chart-bar"></i> Reports
+        </button>
+        <button 
+          class="nav-item" 
+          [ngClass]="{'active': activeTab === 'settings'}" 
+          (click)="setActiveTab('settings')"
+        >
+          <i class="fa fa-cog"></i> Settings
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <!-- Books Tab -->
+      <div *ngIf="activeTab === 'books'" class="books-tab">
+        <div class="tab-header">
+          <h2>Book Management</h2>
+          <button class="add-btn" (click)="clearBookSelection()">Add New Book</button>
+        </div>
+        
+        <div class="admin-grid">
+          <div class="data-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let book of books">
+                  <td>{{ book.id }}</td>
+                  <td>{{ book.title }}</td>
+                  <td>{{ book.author }}</td>
+                  <td>{{ book.category?.name || 'N/A' }}</td>
+                  <td>${{ book.price?.toFixed(2) || '0.00' }}</td>
+                  <td class="actions">
+                    <button class="edit-btn" (click)="selectBook(book)">Edit</button>
+                    <button class="delete-btn" (click)="deleteBook(book.id)">Delete</button>
+                  </td>
+                </tr>
+                <tr *ngIf="books.length === 0">
+                  <td colspan="6" class="no-data">No books found</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="data-form">
+            <h3>{{ selectedBook ? 'Edit Book' : 'Add New Book' }}</h3>
+            <form [formGroup]="bookForm" (ngSubmit)="saveBook()">
+              <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" formControlName="title">
+                <div class="error-message" *ngIf="bookForm.get('title')?.invalid && bookForm.get('title')?.touched">
+                  Title is required
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="author">Author</label>
+                <input type="text" id="author" formControlName="author">
+                <div class="error-message" *ngIf="bookForm.get('author')?.invalid && bookForm.get('author')?.touched">
+                  Author is required
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" formControlName="description" rows="4"></textarea>
+                <div class="error-message" *ngIf="bookForm.get('description')?.invalid && bookForm.get('description')?.touched">
+                  Description is required
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="price">Price</label>
+                  <input type="number" id="price" formControlName="price" step="0.01">
+                  <div class="error-message" *ngIf="bookForm.get('price')?.invalid && bookForm.get('price')?.touched">
+                    Valid price is required
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="categoryId">Category</label>
+                  <select id="categoryId" formControlName="categoryId">
+                    <option value="" disabled>Select category</option>
+                    <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+                  </select>
+                  <div class="error-message" *ngIf="bookForm.get('categoryId')?.invalid && bookForm.get('categoryId')?.touched">
+                    Category is required
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="isbn">ISBN</label>
+                  <input type="text" id="isbn" formControlName="isbn">
+                  <div class="error-message" *ngIf="bookForm.get('isbn')?.invalid && bookForm.get('isbn')?.touched">
+                    ISBN is required
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="publicationDate">Publication Date</label>
+                  <input type="date" id="publicationDate" formControlName="publicationDate">
+                  <div class="error-message" *ngIf="bookForm.get('publicationDate')?.invalid && bookForm.get('publicationDate')?.touched">
+                    Publication date is required
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="language">Language</label>
+                  <input type="text" id="language" formControlName="language">
+                  <div class="error-message" *ngIf="bookForm.get('language')?.invalid && bookForm.get('language')?.touched">
+                    Language is required
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="pageCount">Page Count</label>
+                  <input type="number" id="pageCount" formControlName="pageCount">
+                  <div class="error-message" *ngIf="bookForm.get('pageCount')?.invalid && bookForm.get('pageCount')?.touched">
+                    Valid page count is required
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="fileUrl">File URL</label>
+                <input type="text" id="fileUrl" formControlName="fileUrl">
+                <div class="error-message" *ngIf="bookForm.get('fileUrl')?.invalid && bookForm.get('fileUrl')?.touched">
+                  File URL is required
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="coverImageUrl">Cover Image URL</label>
+                <input type="text" id="coverImageUrl" formControlName="coverImageUrl">
+                <div class="error-message" *ngIf="bookForm.get('coverImageUrl')?.invalid && bookForm.get('coverImageUrl')?.touched">
+                  Cover image URL is required
+                </div>
+              </div>
+              
+              <div class="form-actions">
+                <button type="button" class="cancel-btn" (click)="clearBookSelection()">Cancel</button>
+                <button type="submit" class="save-btn" [disabled]="bookForm.invalid">
+                  {{ isSubmitting ? 'Saving...' : 'Save' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categories Tab -->
+      <div *ngIf="activeTab === 'categories'" class="categories-tab">
+        <div class="tab-header">
+          <h2>Category Management</h2>
+          <button class="add-btn" (click)="clearCategorySelection()">Add New Category</button>
+        </div>
+        
+        <div class="admin-grid">
+          <div class="data-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let category of categories">
+                  <td>{{ category.id }}</td>
+                  <td>{{ category.name }}</td>
+                  <td>{{ category.description }}</td>
+                  <td class="actions">
+                    <button class="edit-btn" (click)="selectCategory(category)">Edit</button>
+                    <button class="delete-btn" (click)="deleteCategory(category.id)">Delete</button>
+                  </td>
+                </tr>
+                <tr *ngIf="categories.length === 0">
+                  <td colspan="4" class="no-data">No categories found</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="data-form">
+            <h3>{{ selectedCategory ? 'Edit Category' : 'Add New Category' }}</h3>
+            <form [formGroup]="categoryForm" (ngSubmit)="saveCategory()">
+              <div class="form-group">
+                <label for="categoryName">Name</label>
+                <input type="text" id="categoryName" formControlName="name">
+                <div class="error-message" *ngIf="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched">
+                  Name is required
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="categoryDescription">Description</label>
+                <textarea id="categoryDescription" formControlName="description" rows="4"></textarea>
+                <div class="error-message" *ngIf="categoryForm.get('description')?.invalid && categoryForm.get('description')?.touched">
+                  Description is required
+                </div>
+              </div>
+              
+              <div class="form-actions">
+                <button type="button" class="cancel-btn" (click)="clearCategorySelection()">Cancel</button>
+                <button type="submit" class="save-btn" [disabled]="categoryForm.invalid">
+                  {{ isSubmitting ? 'Saving...' : 'Save' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Tab -->
+      <div *ngIf="activeTab === 'users'" class="users-tab">
+        <div class="tab-header">
+          <h2>User Management</h2>
+        </div>
+        
+        <div class="data-table full-width">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users">
+                <td>{{ user.id }}</td>
+                <td>{{ user.firstName }} {{ user.lastName }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td class="actions">
+                  <button class="view-btn" (click)="viewUser(user)">View</button>
+                  <button class="edit-btn" (click)="editUser(user)">Edit</button>
+                  <button class="delete-btn" (click)="deleteUser(user.id)">Delete</button>
+                </td>
+              </tr>
+              <tr *ngIf="users.length === 0">
+                <td colspan="5" class="no-data">No users found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Orders Tab -->
+      <div *ngIf="activeTab === 'orders'" class="orders-tab">
+        <div class="tab-header">
+          <h2>Order Management</h2>
+        </div>
+        
+        <div class="data-table full-width">
+          <table>
+            <thead>
+              <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of orders">
+                <td>{{ order.orderNumber }}</td>
+                <td>{{ order.customerName }}</td>
+                <td>{{ order.date }}</td>
+                <td>
+                  <span class="status-badge" [ngClass]="order.status.toLowerCase()">
+                    {{ order.status }}
+                  </span>
+                </td>
+                <td>${{ order.total.toFixed(2) }}</td>
+                <td class="actions">
+                  <button class="view-btn" (click)="viewOrder(order)">View</button>
+                  <button class="edit-btn" (click)="updateOrder(order)">Update</button>
+                </td>
+              </tr>
+              <tr *ngIf="orders.length === 0">
+                <td colspan="6" class="no-data">No orders found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Reports Tab -->
+      <div *ngIf="activeTab === 'reports'" class="reports-tab">
+        <div class="tab-header">
+          <h2>Reports</h2>
+        </div>
+        
+        <div class="reports-grid">
+          <div class="report-card">
+            <h3>Sales Overview</h3>
+            <div class="placeholder-chart">Sales Chart Placeholder</div>
+            <p>Total Sales: $1,245.67</p>
+            <button class="view-report-btn" (click)="viewSalesReport()">View Full Report</button>
+          </div>
+          
+          <div class="report-card">
+            <h3>Top Selling Books</h3>
+            <div class="placeholder-chart">Top Books Chart Placeholder</div>
+            <p>Best Seller: "The Great Adventure"</p>
+            <button class="view-report-btn" (click)="viewTopBooksReport()">View Full Report</button>
+          </div>
+          
+          <div class="report-card">
+            <h3>User Activity</h3>
+            <div class="placeholder-chart">User Activity Chart Placeholder</div>
+            <p>Active Users: 128</p>
+            <button class="view-report-btn" (click)="viewUserActivityReport()">View Full Report</button>
+          </div>
+          
+          <div class="report-card">
+            <h3>Revenue by Category</h3>
+            <div class="placeholder-chart">Categories Chart Placeholder</div>
+            <p>Top Category: Fiction</p>
+            <button class="view-report-btn" (click)="viewCategoryRevenueReport()">View Full Report</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div *ngIf="activeTab === 'settings'" class="settings-tab">
+        <div class="tab-header">
+          <h2>System Settings</h2>
+        </div>
+        
+        <div class="settings-section">
+          <h3>General Settings</h3>
+          <div class="setting-item">
+            <label>Store Name</label>
+            <input type="text" value="EbookStore" class="setting-input">
+          </div>
+          <div class="setting-item">
+            <label>Store Description</label>
+            <textarea class="setting-input" rows="3">Your premier destination for digital books</textarea>
+          </div>
+          <div class="setting-item">
+            <label>Contact Email</label>
+            <input type="email" value="admin@ebookstore.com" class="setting-input">
+          </div>
+          <button class="save-settings-btn" (click)="saveSettings()">Save Settings</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

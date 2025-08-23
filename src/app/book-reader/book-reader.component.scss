@@ -1,0 +1,343 @@
+/* PDF Reader Component Styles */
+:root {
+  --reader-primary: #4a6fa5;
+  --reader-secondary: #ff6b6b;
+  --reader-bg: #f8f9fa;
+  --reader-text: #333333;
+  --reader-border: #e0e0e0;
+  --reader-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --reader-transition: all 0.3s ease;
+}
+
+.book-reader-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--reader-bg);
+  color: var(--reader-text);
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+}
+
+/* Header Styles */
+.reader-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: white;
+  border-bottom: 1px solid var(--reader-border);
+  box-shadow: var(--reader-shadow);
+  z-index: 10;
+}
+
+.reader-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.reader-controls.left {
+  flex: 1;
+}
+
+.reader-controls.right {
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.book-info {
+  flex: 2;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.book-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.book-author {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 5px 0 0;
+}
+
+.control-btn {
+  background-color: white;
+  border: 1px solid var(--reader-border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: var(--reader-transition);
+}
+
+.control-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.control-btn.active {
+  background-color: var(--reader-primary);
+  color: white;
+  border-color: var(--reader-primary);
+}
+
+.control-btn i {
+  font-size: 0.9rem;
+}
+
+.back-btn {
+  color: var(--reader-primary);
+}
+
+/* Main Content Area */
+.reader-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Outline Sidebar */
+.outline-sidebar {
+  width: 250px;
+  background-color: white;
+  border-right: 1px solid var(--reader-border);
+  padding: 15px;
+  overflow-y: auto;
+  box-shadow: var(--reader-shadow);
+  z-index: 5;
+}
+
+.outline-sidebar h3 {
+  font-size: 1.1rem;
+  margin-top: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--reader-border);
+}
+
+.outline-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.outline-item {
+  margin-bottom: 8px;
+}
+
+.outline-item a {
+  color: var(--reader-text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: block;
+  padding: 5px 0;
+  transition: var(--reader-transition);
+}
+
+.outline-item a:hover {
+  color: var(--reader-primary);
+}
+
+.outline-item ul {
+  list-style: none;
+  padding-left: 15px;
+  margin-top: 5px;
+}
+
+/* PDF Container */
+.pdf-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: #e9ecef;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 5;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(74, 111, 165, 0.2);
+  border-top: 4px solid var(--reader-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error Message */
+.error-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: var(--reader-shadow);
+  max-width: 400px;
+  width: 90%;
+}
+
+.error-icon {
+  font-size: 3rem;
+  color: #d32f2f;
+  margin-bottom: 15px;
+}
+
+.retry-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: var(--reader-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--reader-transition);
+}
+
+.retry-button:hover {
+  background-color: #345381;
+}
+
+/* PDF Viewer */
+.pdf-viewer {
+  height: 100%;
+  overflow: auto;
+}
+
+::ng-deep .ng2-pdf-viewer-container {
+  height: 100% !important;
+  width: 100% !important;
+  overflow: auto !important;
+}
+
+::ng-deep pdf-viewer {
+  display: block;
+  height: 100% !important;
+}
+
+/* Footer */
+.reader-footer {
+  padding: 15px 20px;
+  background-color: white;
+  border-top: 1px solid var(--reader-border);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.page-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-btn {
+  background-color: var(--reader-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: var(--reader-transition);
+}
+
+.nav-btn:hover:not(:disabled) {
+  background-color: #345381;
+}
+
+.nav-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.page-indicator {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .book-info {
+    display: none;
+  }
+  
+  .reader-controls.right {
+    justify-content: flex-end;
+  }
+  
+  .outline-sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  
+  .outline-sidebar.shown {
+    transform: translateX(0);
+  }
+  
+  .nav-btn {
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .reader-header {
+    padding: 10px;
+  }
+  
+  .control-btn {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+  }
+  
+  .reader-controls {
+    gap: 5px;
+  }
+  
+  .page-navigation {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .nav-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

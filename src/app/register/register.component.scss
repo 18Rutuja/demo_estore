@@ -1,0 +1,173 @@
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(rgba(26, 75, 140, 0.05), rgba(26, 75, 140, 0.1));
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.register-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 550px;
+  padding: 40px;
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.register-header h1 {
+  font-family: 'Merriweather', serif;
+  color: #1A4B8C;
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.register-header p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.register-form {
+  margin-bottom: 25px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.form-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #1A4B8C;
+}
+
+.form-group input.invalid {
+  border-color: #DC3545;
+}
+
+.error-message {
+  color: #DC3545;
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+
+.terms-agreement {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 25px;
+}
+
+.terms-agreement input {
+  margin-right: 10px;
+  margin-top: 3px;
+}
+
+.terms-agreement label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.terms-agreement a {
+  color: #1A4B8C;
+  text-decoration: none;
+}
+
+.terms-agreement a:hover {
+  text-decoration: underline;
+}
+
+.error-alert {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.register-button {
+  width: 100%;
+  background-color: #1A4B8C;
+  color: white;
+  border: none;
+  padding: 12px 0;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.register-button:hover {
+  background-color: #15407a;
+}
+
+.register-button:disabled {
+  background-color: #7a9bc5;
+  cursor: not-allowed;
+}
+
+.register-footer {
+  text-align: center;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.register-footer a {
+  color: #1A4B8C;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.register-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .register-card {
+    padding: 25px;
+  }
+  
+  .register-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

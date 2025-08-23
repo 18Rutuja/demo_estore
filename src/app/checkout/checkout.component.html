@@ -1,0 +1,96 @@
+<div class="checkout-container">
+  <div class="checkout-header">
+    <h1>Checkout</h1>
+  </div>
+
+  <div class="checkout-content">
+    <div class="order-summary">
+      <h2>Order Summary</h2>
+      <div *ngIf="cartItems.length === 0" class="empty-cart-message">
+        Your cart is empty. <a routerLink="/">Continue shopping</a>
+      </div>
+      
+      <div *ngIf="cartItems.length > 0" class="cart-items">
+        <div *ngFor="let item of cartItems" class="cart-item">
+          <div class="item-image">
+            <img [src]="item.book?.coverImage || item.coverImage" [alt]="item.book?.title || item.title">
+          </div>
+          <div class="item-details">
+            <h3>{{ item.book?.title || item.title }}</h3>
+            <p class="author">by {{ item.book?.author || item.author }}</p>
+            <p class="price">${{ (item.book?.price || item.price).toFixed(2) }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="cart-total">
+        <p>Total: <span>${{ cartTotal.toFixed(2) }}</span></p>
+      </div>
+    </div>
+
+    <div class="payment-section">
+      <h2>Payment Information</h2>
+      <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" formControlName="name" class="form-control" 
+                 [ngClass]="{'invalid': checkoutForm.get('name')?.invalid && checkoutForm.get('name')?.touched}">
+          <div *ngIf="checkoutForm.get('name')?.invalid && checkoutForm.get('name')?.touched" class="error-message">
+            Name is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" formControlName="email" class="form-control"
+                 [ngClass]="{'invalid': checkoutForm.get('email')?.invalid && checkoutForm.get('email')?.touched}">
+          <div *ngIf="checkoutForm.get('email')?.invalid && checkoutForm.get('email')?.touched" class="error-message">
+            Please enter a valid email
+          </div>
+        </div>
+
+        <div *ngIf="paymentMethods && paymentMethods.length > 0" class="form-group">
+          <label>Payment Method</label>
+          <div class="payment-methods">
+            <div class="payment-method">
+              <input type="radio" id="new-card" name="paymentMethod" value="new" 
+                     [checked]="selectedPaymentMethod === 'new'" (change)="onPaymentMethodChange($event)">
+              <label for="new-card">Use a new card</label>
+            </div>
+            
+            <div *ngFor="let method of paymentMethods; let i = index" class="payment-method">
+              <input type="radio" [id]="'saved-card-' + i" name="paymentMethod" [value]="method.id" 
+                     [checked]="selectedPaymentMethod === method.id" (change)="onPaymentMethodChange($event)">
+              <label [for]="'saved-card-' + i">
+                {{ method.card.brand }} ending in {{ method.card.last4 }} (expires {{ method.card.exp_month }}/{{ method.card.exp_year }})
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="selectedPaymentMethod === 'new'" class="form-group">
+          <label>Card Information</label>
+          <div #cardElement class="card-element"></div>
+          <div *ngIf="cardErrors" class="error-message">{{ cardErrors }}</div>
+        </div>
+
+        <div *ngIf="selectedPaymentMethod === 'new'" class="form-group checkbox">
+          <input type="checkbox" id="saveCard" formControlName="saveCard">
+          <label for="saveCard">Save this card for future purchases</label>
+        </div>
+
+        <div *ngIf="errorMessage" class="error-banner">
+          {{ errorMessage }}
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" routerLink="/cart">Back to Cart</button>
+          <button type="submit" class="btn-primary" [disabled]="checkoutForm.invalid || loading">
+            <span *ngIf="!loading">Complete Purchase</span>
+            <span *ngIf="loading" class="spinner"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

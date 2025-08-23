@@ -1,0 +1,30 @@
+<header class="app-header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a routerLink="/" class="navbar-logo">
+        <!-- You can use an <img> tag here if you have a logo file -->
+        EbookStore
+      </a>
+    </div>
+    <div class="navbar-links">
+      <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a routerLink="/books" routerLinkActive="active-link">Browse Books</a>
+      <a routerLink="/cart" routerLinkActive="active-link">My Cart</a>
+      <!-- Add other main navigation links here -->
+    </div>
+    <div class="navbar-actions">
+      <ng-container *ngIf="!isAuthenticated">
+        <a routerLink="/login" class="btn btn-secondary">Login</a>
+        <a routerLink="/register" class="btn btn-primary">Register</a>
+      </ng-container>
+      <ng-container *ngIf="isAuthenticated">
+        <span class="welcome-message">Welcome, {{ currentUser?.firstName }}!</span>
+        <button (click)="navigateToProfile()" class="btn btn-icon" title="Profile">
+          <!-- Add a profile icon here, e.g., using an icon library -->
+          👤
+        </button>
+        <button (click)="logout()" class="btn btn-secondary">Logout</button>
+      </ng-container>
+    </div>
+  </nav>
+</header>

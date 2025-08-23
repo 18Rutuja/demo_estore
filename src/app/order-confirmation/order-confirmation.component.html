@@ -1,0 +1,61 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmation - EbookStore</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="confirmation-container">
+    <div class="confirmation-card">
+      <div class="success-icon">
+        <i class="fa fa-check-circle"></i>
+      </div>
+      
+      <div class="confirmation-header">
+        <h1>Order Confirmed!</h1>
+        <p>Thank you for your purchase. Your ebooks are now available in your library.</p>
+      </div>
+      
+      <div class="order-details">
+        <div class="detail-row">
+          <span class="label">Order Number:</span>
+          <span class="value">{{ order.orderNumber }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Order Date:</span>
+          <span class="value">{{ order.createdAt | date:'medium' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Total Amount:</span>
+          <span class="value">${{ order.totalAmount.toFixed(2) }}</span>
+        </div>
+      </div>
+      
+      <div class="purchased-items">
+        <h2>Purchased Items</h2>
+        <div class="item" *ngFor="let item of order.orderItems">
+          <div class="item-image">
+            <img [src]="item.book.coverImageUrl" [alt]="item.book.title">
+          </div>
+          <div class="item-details">
+            <h3 class="item-title">{{ item.book.title }}</h3>
+            <p class="item-author">by {{ item.book.author }}</p>
+            <p class="item-price">${{ item.price.toFixed(2) }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="confirmation-actions">
+        <button class="library-btn" (click)="goToLibrary()">Go to My Library</button>
+        <button class="continue-btn" (click)="continueShopping()">Continue Shopping</button>
+      </div>
+      
+      <div class="confirmation-footer">
+        <p>A confirmation email has been sent to your registered email address.</p>
+        <p>If you have any questions, please contact our <a href="/support">customer support</a>.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

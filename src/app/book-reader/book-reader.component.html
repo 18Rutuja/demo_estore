@@ -1,0 +1,126 @@
+<div class="book-reader-container">
+  <!-- Header with book info and controls -->
+  <div class="reader-header">
+    <div class="reader-controls left">
+      <button class="control-btn back-btn" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+    </div>
+
+    <div class="book-info" *ngIf="book">
+      <h1 class="book-title">{{ book.title }}</h1>
+      <p class="book-author">by {{ book.author }}</p>
+    </div>
+
+    <div class="reader-controls right">
+      <button
+        class="control-btn outline-btn"
+        (click)="toggleOutline()"
+        [class.active]="isOutlineShown"
+      >
+        <i class="fas fa-list"></i> Contents
+      </button>
+      <button class="control-btn zoom-out-btn" (click)="zoomOut()">
+        <i class="fas fa-search-minus"></i>
+      </button>
+      <button class="control-btn zoom-reset-btn" (click)="resetZoom()">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+      <button class="control-btn zoom-in-btn" (click)="zoomIn()">
+        <i class="fas fa-search-plus"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main content area with sidebar and PDF viewer -->
+  <div class="reader-content">
+    <!-- Outline sidebar -->
+    <div
+      class="outline-sidebar"
+      *ngIf="isOutlineShown && outline && outline.length > 0"
+    >
+      <h3>Table of Contents</h3>
+      <ul class="outline-list">
+        <li *ngFor="let item of outline" class="outline-item">
+          <a href="javascript:void(0)" (click)="item.linkTo && item.linkTo()">{{
+            item.title
+          }}</a>
+          <!-- Recursively render child items if they exist -->
+          <ul *ngIf="item.items && item.items.length > 0">
+            <li *ngFor="let child of item.items" class="outline-item">
+              <a
+                href="javascript:void(0)"
+                (click)="child.linkTo && child.linkTo()"
+                >{{ child.title }}</a
+              >
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Loading and error states -->
+    <div class="pdf-container">
+      <div *ngIf="isLoading" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Loading book content...</p>
+      </div>
+
+      <div *ngIf="error" class="error-message">
+        <div class="error-icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <p>{{ error }}</p>
+        <button class="retry-button" (click)="loadBookContent()">
+          Try Again
+        </button>
+      </div>
+
+      <!-- Extended PDF Viewer -->
+      <div class="pdf-viewer" *ngIf="pdfSrc && !isLoading && !error">
+        <ngx-extended-pdf-viewer
+          [src]="pdfSrc"
+          [zoom]="zoom"
+          [page]="currentPage"
+          [height]="'90vh'"
+          [textLayer]="true"
+          [showHandToolButton]="true"
+          [showSecondaryToolbarButton]="true"
+          [showPresentationModeButton]="false"
+          [showOpenFileButton]="false"
+          [showPrintButton]="false"
+          [showDownloadButton]="false"
+          (pageChange)="onPageChange($event)"
+          (pagesLoaded)="onPagesLoaded($event)"
+          (outlineLoaded)="onOutlineLoaded($event)"
+        >
+        </ngx-extended-pdf-viewer>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer with page navigation -->
+  <div class="reader-footer" *ngIf="pdfSrc && !isLoading && !error">
+    <div class="page-navigation">
+      <button
+        class="nav-btn prev-btn"
+        [disabled]="currentPage <= 1"
+        (click)="prevPage()"
+      >
+        <i class="fas fa-chevron-left"></i> Previous
+      </button>
+
+      <div class="page-indicator">
+        Page {{ currentPage }} of {{ totalPages }}
+      </div>
+
+      <button
+        class="nav-btn next-btn"
+        [disabled]="currentPage >= totalPages"
+        (click)="nextPage()"
+      >
+        Next <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

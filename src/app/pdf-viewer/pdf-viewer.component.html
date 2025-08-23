@@ -1,0 +1,51 @@
+<!-- src/app/components/pdf-viewer/pdf-viewer.component.html -->
+
+<div class="pdf-viewer-container" (contextmenu)="onContextMenu($event)">
+  <div class="pdf-header">
+    <button class="back-button" (click)="goToLibrary()">
+      <i class="fa fa-arrow-left"></i> Back to Library
+    </button>
+    <h2 class="book-title">{{ bookTitle }}</h2>
+    <div class="zoom-controls">
+      <button (click)="zoomOut()"><i class="fa fa-search-minus"></i></button>
+      <span>{{ zoom }}%</span>
+      <button (click)="zoomIn()"><i class="fa fa-search-plus"></i></button>
+    </div>
+  </div>
+
+  <div class="pdf-content">
+    <div *ngIf="loading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading your book...</p>
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      <i class="fa fa-exclamation-triangle"></i>
+      <p>{{ error }}</p>
+    </div>
+
+    <ngx-extended-pdf-viewer
+      *ngIf="!loading && !error && pdfSrc"
+      [src]="pdfSrc"
+      [height]="'80vh'"
+      [showToolbar]="true"
+      [showSidebarButton]="true"
+      [showFindButton]="true"
+      [showPagingButtons]="true"
+      [showZoomButtons]="true"
+      [showPresentationModeButton]="false"
+      [showOpenFileButton]="false"
+      [showPrintButton]="false"
+      [showDownloadButton]="false"
+      [showSecondaryToolbarButton]="true"
+      [showRotateButton]="true"
+      [showHandToolButton]="true"
+      [showSpreadButton]="true"
+      [showPropertiesButton]="false"
+      [zoom]="zoom + '%'"  
+      [page]="currentPage"
+      (pageChange)="onPageChange($event)"
+      (pdfLoaded)="onPdfLoaded($event)"
+    ></ngx-extended-pdf-viewer>
+  </div>
+</div>
