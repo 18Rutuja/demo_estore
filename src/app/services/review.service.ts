@@ -50,12 +50,15 @@ export class ReviewService {
   // Error handling
   private handleError(error: any) {
     let errorMessage = '';
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
+    if (error.error && error.error.message) {
+      // Server-side error with message
       errorMessage = `Error: ${error.error.message}`;
+    } else if (error.message) {
+      // Client-side error or general error
+      errorMessage = `Error: ${error.message}`;
     } else {
-      // Server-side error
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+      // Unknown error
+      errorMessage = 'An unknown error occurred';
     }
     console.error(errorMessage);
     return throwError(() => new Error(errorMessage));

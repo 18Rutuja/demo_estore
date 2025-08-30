@@ -12,11 +12,14 @@ export class ErrorService {
   handleHttpError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = '';
 
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
+    if (error.error && error.error.message) {
+      // Server-side error with message
       errorMessage = `Error: ${error.error.message}`;
+    } else if (error.message) {
+      // Client-side error or general error
+      errorMessage = `Error: ${error.message}`;
     } else {
-      // Server-side error
+      // Server-side error with status codes
       switch (error.status) {
         case 400:
           errorMessage = `Bad Request: ${this.getServerErrorMessage(error)}`;

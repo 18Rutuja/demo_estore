@@ -38,11 +38,12 @@ export class CartComponent implements OnInit {
     this.cartTotal = this.cartService.getCartTotal();
   }
 
-  updateQuantity(bookId: number, quantity: number,): void {
-    if (quantity < 1) {
-      quantity = 1;
+  updateQuantity(bookId: number, quantity: number | string): void {
+    let numericQuantity = typeof quantity === 'string' ? parseInt(quantity, 10) : quantity;
+    if (numericQuantity < 1) {
+      numericQuantity = 1;
     }
-    this.cartService.updateQuantity(bookId, quantity);
+    this.cartService.updateQuantity(bookId, numericQuantity);
     this.loadCart();
   }
 
