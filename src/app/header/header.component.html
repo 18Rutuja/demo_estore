@@ -1,17 +1,48 @@
-<header class="app-header">
-  <nav class="navbar">
+<!-- <header class="app-header" role="banner">
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
     <div class="navbar-brand">
-      <a routerLink="/" class="navbar-logo">
-        <!-- You can use an <img> tag here if you have a logo file -->
+      <a routerLink="/" class="navbar-logo" aria-label="Go to homepage" tabindex="0">
         EbookStore
       </a>
     </div>
+
+    <div class="navbar-links">
+      <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact:true}" aria-current="page" tabindex="0">Home</a>
+      <a routerLink="/books" routerLinkActive="active-link" tabindex="0">Browse Books</a>
+      <a routerLink="/cart" routerLinkActive="active-link" aria-label="View your cart" tabindex="0">My Cart</a>
+    </div>
+
+    <div class="navbar-actions" *ngIf="!isAuthenticated; else loggedIn">
+      <a routerLink="/login" class="btn btn-secondary" tabindex="0">Login</a>
+      <a routerLink="/register" class="btn btn-primary" tabindex="0">Register</a>
+    </div>
+
+    <ng-template #loggedIn>
+      <div class="navbar-actions">
+        <span class="welcome-message" aria-live="polite">Welcome, {{ currentUser?.firstName }}!</span>
+        <button (click)="navigateToProfile()" class="btn btn-icon" aria-label="User Profile" tabindex="0">👤</button>
+        <button (click)="logout()" class="btn btn-secondary" tabindex="0">Logout</button>
+      </div>
+    </ng-template>
+  </nav>
+</header> -->
+
+
+
+<header class="app-header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a routerLink="/" class="navbar-logo">HJ</a>
+    </div>
+
     <div class="navbar-links">
       <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">Home</a>
-      <a routerLink="/books" routerLinkActive="active-link">Browse Books</a>
+      <!-- <a routerLink="/books" routerLinkActive="active-link">Browse Books</a> -->
+       <a href="#catalogue" class="nav-link">E-Books Catalogue</a>
+      <a href="#author" class="nav-link">The Author</a>
       <a routerLink="/cart" routerLinkActive="active-link">My Cart</a>
-      <!-- Add other main navigation links here -->
     </div>
+
     <div class="navbar-actions">
       <ng-container *ngIf="!isAuthenticated">
         <a routerLink="/login" class="btn btn-secondary">Login</a>
@@ -19,12 +50,34 @@
       </ng-container>
       <ng-container *ngIf="isAuthenticated">
         <span class="welcome-message">Welcome, {{ currentUser?.firstName }}!</span>
-        <button (click)="navigateToProfile()" class="btn btn-icon" title="Profile">
-          <!-- Add a profile icon here, e.g., using an icon library -->
-          👤
-        </button>
+        <button (click)="navigateToProfile()" class="btn btn-icon" title="Profile">👤</button>
         <button (click)="logout()" class="btn btn-secondary">Logout</button>
       </ng-container>
     </div>
+
+    <button class="hamburger-menu" (click)="toggleMobileMenu()" [class.active]="isMobileMenuOpen" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </nav>
 </header>
+
+<div class="mobile-nav-overlay" [class.active]="isMobileMenuOpen">
+  <nav class="mobile-nav-links">
+    <a routerLink="/" (click)="toggleMobileMenu()">Home</a>
+    <!-- <a routerLink="/books" (click)="toggleMobileMenu()">Browse Books</a> -->
+    <a routerLink="/cart" (click)="toggleMobileMenu()">My Cart</a>
+    <a href="#author" class="nav-link">The Author</a>
+    <a href="#catalogue" class="nav-link">E-Books Catalogue</a>
+  </nav>
+  <div class="mobile-nav-actions">
+    <ng-container *ngIf="!isAuthenticated">
+      <a routerLink="/login" class="btn btn-secondary" (click)="toggleMobileMenu()">Login</a>
+      <a routerLink="/register" class="btn btn-primary" (click)="toggleMobileMenu()">Register</a>
+    </ng-container>
+    <ng-container *ngIf="isAuthenticated">
+      <button (click)="logout(); toggleMobileMenu();" class="btn btn-secondary">Logout</button>
+    </ng-container>
+  </div>
+</div>

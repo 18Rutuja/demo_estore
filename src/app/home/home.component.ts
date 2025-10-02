@@ -166,7 +166,31 @@ export class HomeComponent implements OnInit, OnDestroy {
   addBookToCart(book: Book, event?: MouseEvent): void {
     if (event) event.stopPropagation();
     this.cartService.addToCart(book);
-    alert(`${book.title} added to cart!`);
+    
+    // Enhanced feedback with toast notification instead of alert
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.innerHTML = `
+      <div class="toast-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="toast-content">
+        <p class="toast-title">${book.title}</p>
+        <p class="toast-message">Added to your cart</p>
+      </div>
+    `;
+    document.body.appendChild(toast);
+    
+    // Animate and remove toast after delay
+    setTimeout(() => {
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }, 100);
   }
 
   navigateToCategory(categoryId: number): void {
@@ -179,3 +203,4 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 }
+

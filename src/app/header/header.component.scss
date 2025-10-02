@@ -1,79 +1,71 @@
-/* Variables (consider moving to a global styles file) */
-$primary-color: #1A4B8C; // Deep blue
-$secondary-color: #F3B53B; // Gold/Yellow
-$text-color: #333;
-$light-text-color: #fff;
-$border-color: #e0e0e0;
-$header-height: 60px;
+/* --- MODERN & RESPONSIVE HEADER STYLES --- */
 
+/* 1. VARIABLES (Consistent with "Modern Tech & Innovation" theme) */
+$primary-color: #2C3E50;
+$accent-color: #27AE60;
+$accent-dark: #229954;
+$text-primary: #34495E;
+$text-on-dark: #FFFFFF;
+$card-background: #FFFFFF;
+$border-color: #EAECEE;
+$header-height: 70px; // Slightly taller for a more premium feel
+$transition: all 0.3s ease;
+
+/* 2. MAIN HEADER & NAVBAR STYLING */
 .app-header {
-  background-color: $light-text-color;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: $card-background;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   height: $header-height;
   position: sticky;
   top: 0;
-  z-index: 1000; // Ensure header stays on top
-}
-
-/* This is a dummy file to simulate the error */
-$secondary-color: #6c757d;
-
-.some-element {
-  background-color: darken($secondary-color, 10%);
+  z-index: 1000;
 }
 
 .navbar {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 25px;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.navbar-brand {
-  display: flex;
-  align-items: center;
-}
-
 .navbar-logo {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
   color: $primary-color;
   text-decoration: none;
-  font-family: 'Merriweather', serif; // Use a distinct font for the brand
 }
 
 .navbar-links {
   display: flex;
-  gap: 25px;
-
+  gap: 30px;
   a {
+    font-family: 'Lato', sans-serif;
     text-decoration: none;
-    color: $text-color;
+    color: $text-primary;
     font-weight: 500;
     padding: 5px 0;
     position: relative;
-    transition: color 0.3s;
+    transition: $transition;
 
     &::after {
       content: '';
       position: absolute;
       width: 0;
       height: 2px;
-      bottom: 0;
-      left: 0;
-      background-color: $secondary-color;
-      transition: width 0.3s ease-in-out;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: $accent-color;
+      transition: width 0.3s ease;
     }
 
-    &:hover,
-    &.active-link {
+    &:hover, &.active-link {
       color: $primary-color;
-      &::after {
-        width: 100%;
-      }
+      &::after { width: 100%; }
     }
   }
 }
@@ -85,64 +77,121 @@ $secondary-color: #6c757d;
 }
 
 .welcome-message {
-  color: $text-color;
+  color: $text-primary;
   font-size: 0.9rem;
-  margin-right: 10px;
 }
 
-/* Basic Button Styling (consider a global button style) */
+/* 3. BUTTON STYLING */
 .btn {
-  padding: 8px 15px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
   display: inline-block;
   text-align: center;
-  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  transition: $transition;
 }
 
 .btn-primary {
-  background-color: $secondary-color;
-  color: $text-color;
+  background-color: $accent-color;
+  color: $text-on-dark;
   &:hover {
-    background-color: darken($secondary-color, 10%);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    background-color: $accent-dark;
+    transform: translateY(-2px);
   }
 }
 
 .btn-secondary {
-  background-color: $primary-color;
-  color: $light-text-color;
+  background-color: #EAECEE;
+  color: $primary-color;
   &:hover {
-    background-color: darken($primary-color, 10%);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    background-color: #D5D8DC;
   }
 }
 
 .btn-icon {
   background: none;
+  font-size: 1.5rem;
+  color: $primary-color;
+  &:hover { color: $accent-color; }
+}
+
+/* 4. HAMBURGER MENU & MOBILE OVERLAY STYLING */
+.hamburger-menu {
+  display: none; // Hidden on desktop
+  background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.2rem; // Adjust icon size
-  padding: 5px;
-  color: $primary-color;
-  &:hover {
-    color: darken($primary-color, 10%);
+  z-index: 1010; // Above the header but below the overlay content
+  padding: 10px;
+  span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: $primary-color;
+    margin: 5px 0;
+    border-radius: 3px;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  // Animate to an "X" when active
+  &.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  &.active span:nth-child(2) { opacity: 0; }
+  &.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
+}
+
+.mobile-nav-overlay {
+  position: fixed;
+  top: $header-height;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - #{$header-height});
+  background-color: rgba(44, 62, 80, 0.98); // Dark, semi-transparent background
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 999;
+  &.active {
+    opacity: 1;
+    visibility: visible;
   }
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .navbar-links {
-    display: none; // Hide links on smaller screens, consider a hamburger menu
-  }
-  .welcome-message {
-    display: none; // Hide welcome message on smaller screens
-  }
-  .navbar {
-    padding: 0 15px;
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  a {
+    color: $text-on-dark;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 600;
   }
 }
 
+.mobile-nav-actions {
+  display: flex;
+  gap: 20px;
+  .btn {
+    padding: 12px 24px;
+    font-size: 1rem;
+  }
+}
+
+/* 5. RESPONSIVE BREAKPOINT */
+@media (max-width: 820px) {
+  .navbar-links,
+  .navbar-actions {
+    display: none; // Hide desktop versions
+  }
+  .hamburger-menu {
+    display: block; // Show hamburger button
+  }
+}
