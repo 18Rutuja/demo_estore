@@ -16,7 +16,7 @@ import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
-} )
+})
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
   private currentUserSubject: BehaviorSubject<any>;
@@ -27,7 +27,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    @Inject(PLATFORM_ID ) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isLocalStorageAvailable = this.checkLocalStorage();
     this.currentUserSubject = new BehaviorSubject<any>(null);
@@ -56,16 +56,7 @@ export class AuthService {
   private getUserFromStorage(): any {
     if (isPlatformBrowser(this.platformId)) {
       const userJson = localStorage.getItem('currentUser');
-      if (!userJson) {
-        return null;
-      }
-      try {
-        return JSON.parse(userJson);
-      } catch (e) {
-        console.error('Error parsing user data from localStorage', e);
-        localStorage.removeItem('currentUser'); // Clear corrupted data
-        return null;
-      }
+      return userJson ? JSON.parse(userJson) : null;
     }
     return null;
   }
@@ -96,17 +87,8 @@ export class AuthService {
 
   getUser(): any {
     if (!this.isLocalStorageAvailable) return null;
-    const userJson = localStorage.getItem('currentUser');
-    if (!userJson) {
-      return null;
-    }
-    try {
-      return JSON.parse(userJson);
-    } catch (e) {
-      console.error('Error parsing user data from localStorage on getUser()', e);
-      localStorage.removeItem('currentUser'); // Clear corrupted data
-      return null;
-    }
+    const user = localStorage.getItem('currentUser');
+    return user ? JSON.parse(user) : null;
   }
 
   // ===== Auth Methods =====
@@ -133,13 +115,12 @@ export class AuthService {
       }
     }
 
-    return this.http.post<any>(`${this.apiUrl}/login`, { email, password } ).pipe(
+    return this.http.post<any>(`${this.apiUrl}/login`, { email, password }).pipe(
       tap((response) => {
         if (response?.accessToken) {
           this.saveToken(response.accessToken);
-          // Backend now returns 'user' object directly in response
-          this.saveUser(response.user);
-          // this.startRefreshTokenTimer(); // No refresh token in current backend
+          this.saveUser({ ...response.user, refreshToken: response.refreshToken });
+          this.startRefreshTokenTimer();
         }
       }),
       catchError((error) => throwError(() => error))
@@ -170,12 +151,11 @@ export class AuthService {
       });
     }
 
-    return this.http.post<any>(`${this.apiUrl}/register`, userData ).pipe(
+    return this.http.post<any>(`${this.apiUrl}/register`, userData).pipe(
       catchError((error) => throwError(() => error))
     );
   }
 
-  // No refresh token in current backend implementation
   refreshToken(): Observable<any> {
     const currentUser = this.currentUserValue;
     if (!currentUser?.refreshToken) return of(null);
@@ -183,7 +163,7 @@ export class AuthService {
     return this.http
       .post<any>(`${this.apiUrl}/refresh-token`, {
         refreshToken: currentUser.refreshToken,
-      } )
+      })
       .pipe(
         map((response) => {
           const user = {
@@ -204,16 +184,6 @@ export class AuthService {
       );
   }
 
-  // Get current user profile from backend
-  getUserProfile(): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}/users/profile` ).pipe(
-      catchError((error) => {
-        console.error('Error fetching user profile:', error);
-        return throwError(() => error);
-      })
-    );
-  }
-
   // ===== Role & Status Checks =====
   isLoggedIn(): boolean {
     return !!this.getToken();
@@ -221,14 +191,14 @@ export class AuthService {
 
   isAdmin(): boolean {
     const currentUser = this.currentUserValue;
-    return !!(currentUser && currentUser.roles?.some((role: any) => role.name === 'ADMIN'));
+    return !!(currentUser && currentUser.roles?.includes('ROLE_ADMIN'));
   }
 
   public get currentUserValue(): any {
     return this.currentUserSubject.value;
   }
 
-  // ===== Refresh Token Timer (not used with current backend) =====
+  // ===== Refresh Token Timer =====
   private startRefreshTokenTimer(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 

@@ -16,17 +16,14 @@ export class ApiErrorHandlingService {
   handleError(error: HttpErrorResponse) {
     let errorMessage = '';
     
-    if (error.error && error.error.message) {
-      // Server-side error with message
-      errorMessage = error.error.message;
-    } else if (error.message) {
-      // Client-side error or general error
-      errorMessage = error.message;
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Server-side error with status codes
+      // Server-side error
       switch (error.status) {
         case 400:
-          errorMessage = 'Bad request. Please check your input.';
+          errorMessage = error.error?.message || 'Bad request. Please check your input.';
           break;
         case 401:
           errorMessage = 'Unauthorized. Please log in again.';
@@ -41,7 +38,7 @@ export class ApiErrorHandlingService {
           errorMessage = 'Server error. Please try again later.';
           break;
         default:
-          errorMessage = `Error Code: ${error.status}`;
+          errorMessage = `Error Code: ${error.status}, Message: ${error.message}`;
       }
     }
     
